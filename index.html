@@ -89,6 +89,7 @@
             let isListening = false;
             let conversationHistory = [];
             let isAudioInitialized = false; // Flag for mobile audio fix
+            let speakingInterrupted = false; // Flag for speech interruption
 
             // --- AUTHENTICATION ---
             onAuthStateChanged(auth, user => {
@@ -135,15 +136,13 @@
             }
             
         // --- SPEECH SYNTHESIS (MOUTH) ---
-        let speakingInterrupted = false; // Global flag to track interruption
+            const speak = (text) => {
+            speakingInterrupted = false; // Reset on new speech
 
-const speak = (text) => {
-  speakingInterrupted = false; // Reset on new speech
+            const synth = window.speechSynthesis;
 
-  const synth = window.speechSynthesis;
-
-  // Helper to find female voice
-        const getFemaleVoice = () => {
+        // Helper to find female voice    
+           const getFemaleVoice = () => {
             const voices = synth.getVoices();
             return voices.find(v =>
             v.name.toLowerCase().includes('female') ||
