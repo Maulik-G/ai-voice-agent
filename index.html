@@ -179,13 +179,12 @@
             talkButton.disabled = true;
 
             utterance.onend = () => {
-            index++;
-            speakNextSentence();
+                index++;
+                speakNextSentence();
+                setTimeout(speakNextSentence, 50); // slight delay before next sentence
             };
-
-                synth.speak(utterance); 
+            synth.speak(utterance); 
             }
-
             speakNextSentence();
             };        
             
