@@ -58,18 +58,18 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // --- CONFIGURATION ---
-        // 1. PASTE YOUR FIREBASE CONFIG OBJECT HERE
         const firebaseConfig = {
             apiKey: "AIzaSyBPdWYqULRWKAHouYuANzA2IWs6WkSTemE",
             authDomain: "ai-voice-agent-4aa37.firebaseapp.com",
             projectId: "ai-voice-agent-4aa37",
-            storageBucket: "ai-voice-agent-4aa37.firebasestorage.app",
+            // --- CORRECTED THIS LINE ---
+            storageBucket: "ai-voice-agent-4aa37.appspot.com", 
             messagingSenderId: "758587245714",
             appId: "1:758587245714:web:22ee829eac444e7411524b"
         };
         
-        // 2. REPLACE THIS WITH YOUR ACTUAL BACKEND URL
-        const BACKEND_URL = 'https://maulikg.pythonanywhere.com/';
+        // --- CORRECTED THIS LINE ---
+        const BACKEND_URL = 'https://maulikg.pythonanywhere.com/ask';
 
         // --- INITIALIZATION ---
         const app = initializeApp(firebaseConfig);
@@ -95,13 +95,11 @@
         onAuthStateChanged(auth, user => {
             loadingDiv.style.display = 'none';
             if (user) {
-                // User is signed in
                 authContainer.style.display = 'none';
                 mainContainer.style.display = 'block';
                 userEmailDiv.textContent = `Signed in as ${user.email}`;
                 resetConversation();
             } else {
-                // User is signed out
                 authContainer.style.display = 'block';
                 mainContainer.style.display = 'none';
             }
@@ -126,6 +124,7 @@
             recognition.onend = () => { isListening = false; statusDiv.textContent = 'Processing...'; talkButton.classList.remove('pulse', 'bg-red-500'); };
             recognition.onresult = event => {
                 const transcript = event.results[0][0].transcript;
+                console.log('Speech recognized:', transcript); 
                 addMessage('You', transcript);
                 sendToBackend(transcript);
             };
@@ -215,7 +214,6 @@
         
         const resetConversation = () => {
             logDiv.innerHTML = '';
-            // This is where you define the AI's personality!
             conversationHistory = [{
                 role: "model",
                 parts: [{ text: "You are a helpful and friendly AI assistant. Introduce yourself and ask how you can help." }]
