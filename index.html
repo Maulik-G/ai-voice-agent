@@ -137,8 +137,10 @@
         // --- SPEECH SYNTHESIS (MOUTH) ---
         const speak = (text) => {
             const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.2;
             utterance.onstart = () => { statusDiv.textContent = 'AI is speaking...'; talkButton.disabled = true; };
             utterance.onend = () => { statusDiv.textContent = 'Press the button to speak.'; talkButton.disabled = false; };
+            
             window.speechSynthesis.speak(utterance);
         };
         
@@ -287,4 +289,5 @@ To sound natural, you must occasionally use conversational fillers. This is cruc
     </script>
 </body>
 </html>
+
 
