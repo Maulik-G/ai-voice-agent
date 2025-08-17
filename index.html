@@ -62,14 +62,13 @@
             apiKey: "AIzaSyBPdWYqULRWKAHouYuANzA2IWs6WkSTemE",
             authDomain: "ai-voice-agent-4aa37.firebaseapp.com",
             projectId: "ai-voice-agent-4aa37",
-            // --- CORRECTED THIS LINE ---
-            storageBucket: "ai-voice-agent-4aa37.appspot.com", 
+            storageBucket: "ai-voice-agent-4aa37.appspot.com",
             messagingSenderId: "758587245714",
             appId: "1:758587245714:web:22ee829eac444e7411524b"
         };
         
-        // --- CORRECTED THIS LINE ---
-        const BACKEND_URL = 'https://maulikg.pythonanywhere.com/';
+        // --- THIS IS THE CORRECTED URL ---
+        const BACKEND_URL = 'https://maulikg.pythonanywhere.com/ask';
 
         // --- INITIALIZATION ---
         const app = initializeApp(firebaseConfig);
@@ -207,7 +206,7 @@
             
             messageBubble.appendChild(senderTag);
             messageBubble.appendChild(messageText);
-            messageWrapper.appendChild(messageBubble);
+            messageWrapper.appendChild(messageWrapper);
             logDiv.appendChild(messageWrapper);
             logDiv.scrollTop = logDiv.scrollHeight;
         };
@@ -230,4 +229,3 @@
     </script>
 </body>
 </html>
-
