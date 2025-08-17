@@ -90,6 +90,8 @@
             let conversationHistory = [];
             let isAudioInitialized = false; // Flag for mobile audio fix
             let speakingInterrupted = false; // Flag for speech interruption
+            let isSpeakingChunks = false;
+
 
             // --- AUTHENTICATION ---
             onAuthStateChanged(auth, user => {
@@ -137,56 +139,55 @@
             
         // --- SPEECH SYNTHESIS (MOUTH) ---
             const speak = (text) => {
-            speakingInterrupted = false; // Reset on new speech
+        // If a speaking loop is active, interrupt and return
+        if (isSpeakingChunks) {
+            speakingInterrupted = true;
+            window.speechSynthesis.cancel();
+            return;
+        }
+        speakingInterrupted = false;
+        isSpeakingChunks = true; // Mark chunk speaking as active
 
-            const synth = window.speechSynthesis;
-
-        // Helper to find female voice    
-           const getFemaleVoice = () => {
+        const synth = window.speechSynthesis;
+        const getFemaleVoice = () => {
             const voices = synth.getVoices();
             return voices.find(v =>
             v.name.toLowerCase().includes('female') ||
             v.name.toLowerCase().includes('samantha') ||
             v.name.toLowerCase().includes('zira') ||
-            v.name.toLowerCase().includes('google uk english female') ||
-            v.name.toLowerCase().includes('en-gb') ||
-            v.name.toLowerCase().includes('en-us') ||
-            v.name.toLowerCase().includes('en-au') ||
-            v.name.toLowerCase().includes('en-ca') ||
-            v.name.toLowerCase().includes('en-in')
+            v.name.toLowerCase().includes('google uk english female')
             );
         };
+        const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
+        let idx = 0;
 
-        const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text]; // split into sentences
-        let index = 0;
-
-        function speakNextSentence() {
-            if (speakingInterrupted || index >= sentences.length) {
+        function speakNext() {
+            if (speakingInterrupted || idx >= sentences.length) {
             statusDiv.textContent = 'Press the button to speak.';
             talkButton.disabled = false;
+            isSpeakingChunks = false; // Release active loop
             return;
             }
-
-            const utterance = new SpeechSynthesisUtterance(sentences[index]);
-            utterance.rate = 1.2;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-
+            const utter = new SpeechSynthesisUtterance(sentences[idx]);
+            utter.rate = 1.2;
             const femaleVoice = getFemaleVoice();
-            if (femaleVoice) utterance.voice = femaleVoice;
+            if (femaleVoice) utter.voice = femaleVoice;
 
             statusDiv.textContent = 'AI is speaking...';
             talkButton.disabled = true;
 
-            utterance.onend = () => {
-                index++;
-                speakNextSentence();
-                setTimeout(speakNextSentence, 50); // slight delay before next sentence
+            utter.onend = () => {
+            idx++;
+            setTimeout(speakNext, 50);
             };
-            synth.speak(utterance); 
-            }
-            speakNextSentence();
-            };        
+            utter.onerror = () => {
+            isSpeakingChunks = false;
+            };
+            synth.speak(utter);
+        }
+        speakNext();
+        };
+
             
             // --- MOBILE AUDIO FIX ---
             const initAudioContext = () => {
@@ -325,6 +326,8 @@
             // Interrupt any ongoing speech immediately
             speakingInterrupted = true;
             window.speechSynthesis.cancel();
+            isSpeakingChunks = false; // Reset speaking state
+            
 
             // Toggle listening state and UI feedback
             isListening = !isListening;
