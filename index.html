@@ -135,12 +135,17 @@
             }
             
         // --- SPEECH SYNTHESIS (MOUTH) ---
-        const speak = (text) => {
-        const synth = window.speechSynthesis;
-        let voices = synth.getVoices();
+        let speakingInterrupted = false; // Global flag to track interruption
 
-        // Helper to find female voice
-        const getFemaleVoice = () => voices.find(v =>
+const speak = (text) => {
+  speakingInterrupted = false; // Reset on new speech
+
+  const synth = window.speechSynthesis;
+
+  // Helper to find female voice
+        const getFemaleVoice = () => {
+            const voices = synth.getVoices();
+            return voices.find(v =>
             v.name.toLowerCase().includes('female') ||
             v.name.toLowerCase().includes('samantha') ||
             v.name.toLowerCase().includes('zira') ||
@@ -149,43 +154,41 @@
             v.name.toLowerCase().includes('en-us') ||
             v.name.toLowerCase().includes('en-au') ||
             v.name.toLowerCase().includes('en-ca') ||
-            v.name.toLowerCase().includes('en-in') 
-        );
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.2;
-        utterance.pitch = 1.0; // Set pitch to a neutral value
-        utterance.volume = 1.0; // Set volume to maximum
-        
-
-        let femaleVoice = getFemaleVoice();
-        if (femaleVoice) utterance.voice = femaleVoice;
-
-
-        utterance.onstart = () => {
-            statusDiv.textContent = 'AI is speaking...';
-            talkButton.disabled = true;
-            
+            v.name.toLowerCase().includes('en-in')
+            );
         };
-        utterance.onend = () => {
+
+        const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text]; // split into sentences
+        let index = 0;
+
+        function speakNextSentence() {
+            if (speakingInterrupted || index >= sentences.length) {
             statusDiv.textContent = 'Press the button to speak.';
             talkButton.disabled = false;
-        };
+            return;
+            }
 
-        // If voices aren't loaded yet, listen for them
-        if (voices.length === 0 && typeof synth.onvoiceschanged !== 'undefined') {
-            synth.onvoiceschanged = () => {
-                voices = synth.getVoices();
-                femaleVoice = getFemaleVoice();
-                if (femaleVoice) utterance.voice = femaleVoice;
-                synth.speak(utterance);
+            const utterance = new SpeechSynthesisUtterance(sentences[index]);
+            utterance.rate = 1.2;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            const femaleVoice = getFemaleVoice();
+            if (femaleVoice) utterance.voice = femaleVoice;
+
+            statusDiv.textContent = 'AI is speaking...';
+            talkButton.disabled = true;
+
+            utterance.onend = () => {
+            index++;
+            speakNextSentence();
             };
-        } else {
-            synth.speak(utterance);
-        }
-    };
 
-        
+                synth.speak(utterance); 
+            }
+
+            speakNextSentence();
+            };        
             
             // --- MOBILE AUDIO FIX ---
             const initAudioContext = () => {
@@ -320,24 +323,27 @@
 
             talkButton.addEventListener('click', () => {
             initAudioContext();
-            // Toggle listening state
+
+            // Interrupt any ongoing speech immediately
+            speakingInterrupted = true;
+            window.speechSynthesis.cancel();
+
+            // Toggle listening state and UI feedback
             isListening = !isListening;
             talkButton.classList.toggle('pulse', isListening);
             talkButton.classList.toggle('bg-red-500', isListening);
 
-            // Cancel any ongoing speech before listening
-            window.speechSynthesis.cancel();
-        
             if (isListening) {
                 recognition.start();
                 statusDiv.textContent = 'Listening...';
-                talkButton.disabled = true; // Disable button while listening
+                talkButton.disabled = true;
             } else {
                 recognition.stop();
                 statusDiv.textContent = 'Processing...';
-                talkButton.disabled = false; // Re-enable button after stopping
+                talkButton.disabled = false;
             }
-    });
+            });
+
 
             // Initialize conversation on first load
             resetConversation();
