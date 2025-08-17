@@ -1,332 +1,349 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Agent</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .pulse { animation: pulse-blue 2s infinite; }
-        @keyframes pulse-blue {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        #auth-container, #main-container { display: none; }
-    </style>
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Voice Agent</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            body { font-family: 'Inter', sans-serif; }
+            .pulse { animation: pulse-blue 2s infinite; }
+            @keyframes pulse-blue {
+                0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+                70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+                100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+            }
+            #auth-container, #main-container { display: none; }
+        </style>
+    </head>
+    <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <div id="loading" class="text-center">
-        <p class="text-lg text-gray-600">Loading...</p>
-    </div>
-
-    <!-- Authentication Container -->
-    <div id="auth-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
-        <h1 class="text-3xl font-bold text-gray-800">Welcome!</h1>
-        <p class="text-gray-500 mt-2 mb-8">Please sign in to start your AI Voice Agent.</p>
-        <button id="signInButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full transition duration-300">
-            Sign in with Google
-        </button>
-    </div>
-
-    <!-- Main Agent Container -->
-    <div id="main-container" class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">AI Voice Agent</h1>
-                <p id="user-email" class="text-sm text-gray-500"></p>
-            </div>
-            <button id="signOutButton" class="text-sm text-gray-600 hover:text-red-500 transition">Sign Out</button>
+        <div id="loading" class="text-center">
+            <p class="text-lg text-gray-600">Loading...</p>
         </div>
-        <div class="flex justify-center my-8">
-            <button id="talkButton" class="w-24 h-24 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m12 0v-1.5a6 6 0 00-12 0v1.5m12 0v-1.5a6 6 0 00-12 0v1.5" /></svg>
+
+        <!-- Authentication Container -->
+        <div id="auth-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Welcome!</h1>
+            <p class="text-gray-500 mt-2 mb-8">Please sign in to start your AI Voice Agent.</p>
+            <button id="signInButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full transition duration-300">
+                Sign in with Google
             </button>
         </div>
-        <div id="status" class="text-center text-gray-600 h-8 mb-4 transition-opacity duration-300"></div>
-        <div class="space-y-4 h-64 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div id="log"></div>
+
+        <!-- Main Agent Container -->
+        <div id="main-container" class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">AI Voice Agent</h1>
+                    <p id="user-email" class="text-sm text-gray-500"></p>
+                </div>
+                <button id="signOutButton" class="text-sm text-gray-600 hover:text-red-500 transition">Sign Out</button>
+            </div>
+            <div class="flex justify-center my-8">
+                <button id="talkButton" class="w-24 h-24 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                    <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m12 0v-1.5a6 6 0 00-12 0v1.5m12 0v-1.5a6 6 0 00-12 0v1.5" /></svg>
+                </button>
+            </div>
+            <div id="status" class="text-center text-gray-600 h-8 mb-4 transition-opacity duration-300"></div>
+            <div class="space-y-4 h-64 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div id="log"></div>
+            </div>
         </div>
-    </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        <!-- Firebase SDKs -->
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // --- CONFIGURATION ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPdWYqULRWKAHouYuANzA2IWs6WkSTemE",
-            authDomain: "ai-voice-agent-4aa37.firebaseapp.com",
-            projectId: "ai-voice-agent-4aa37",
-            storageBucket: "ai-voice-agent-4aa37.appspot.com",
-            messagingSenderId: "758587245714",
-            appId: "1:758587245714:web:22ee829eac444e7411524b"
-        };
-        
-        const BACKEND_URL = 'https://maulikg.pythonanywhere.com/ask';
-
-        // --- INITIALIZATION ---
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        // --- DOM ELEMENTS ---
-        const loadingDiv = document.getElementById('loading');
-        const authContainer = document.getElementById('auth-container');
-        const mainContainer = document.getElementById('main-container');
-        const signInButton = document.getElementById('signInButton');
-        const signOutButton = document.getElementById('signOutButton');
-        const userEmailDiv = document.getElementById('user-email');
-        const talkButton = document.getElementById('talkButton');
-        const statusDiv = document.getElementById('status');
-        const logDiv = document.getElementById('log');
-
-        // --- STATE ---
-        let isListening = false;
-        let conversationHistory = [];
-        let isAudioInitialized = false; // Flag for mobile audio fix
-
-        // --- AUTHENTICATION ---
-        onAuthStateChanged(auth, user => {
-            loadingDiv.style.display = 'none';
-            if (user) {
-                authContainer.style.display = 'none';
-                mainContainer.style.display = 'block';
-                userEmailDiv.textContent = `Signed in as ${user.email}`;
-                resetConversation();
-            } else {
-                authContainer.style.display = 'block';
-                mainContainer.style.display = 'none';
-            }
-        });
-
-        signInButton.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch(error => console.error('Sign in error', error));
-        });
-
-        signOutButton.addEventListener('click', () => {
-            signOut(auth).catch(error => console.error('Sign out error', error));
-        });
-
-        // --- SPEECH RECOGNITION (EARS) ---
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition;
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.lang = 'en-US';
-            recognition.onstart = () => { isListening = true; statusDiv.textContent = 'Listening...'; talkButton.classList.add('pulse', 'bg-red-500'); };
-            recognition.onend = () => { isListening = false; statusDiv.textContent = 'Processing...'; talkButton.classList.remove('pulse', 'bg-red-500'); };
-            recognition.onresult = event => {
-                // --- CRITICAL SYNTAX FIX HERE ---
-                const transcript = event.results[0][0].transcript;
-                console.log('Speech recognized:', transcript); 
-                addMessage('You', transcript);
-                sendToBackend(transcript);
+            // --- CONFIGURATION ---
+            const firebaseConfig = {
+                apiKey: "AIzaSyBPdWYqULRWKAHouYuANzA2IWs6WkSTemE",
+                authDomain: "ai-voice-agent-4aa37.firebaseapp.com",
+                projectId: "ai-voice-agent-4aa37",
+                storageBucket: "ai-voice-agent-4aa37.appspot.com",
+                messagingSenderId: "758587245714",
+                appId: "1:758587245714:web:22ee829eac444e7411524b"
             };
-            recognition.onerror = event => { statusDiv.textContent = `Error: ${event.error}.`; };
-        } else {
-            statusDiv.textContent = "Speech Recognition not supported in this browser.";
-            talkButton.disabled = true;
-        }
-        
-    // --- SPEECH SYNTHESIS (MOUTH) ---
-    const speak = (text) => {
-    const synth = window.speechSynthesis;
-    let voices = synth.getVoices();
+            
+            const BACKEND_URL = 'https://maulikg.pythonanywhere.com/ask';
 
-    // Helper to find female voice
-    const getFemaleVoice = () => voices.find(v =>
-        v.name.toLowerCase().includes('female') ||
-        v.name.toLowerCase().includes('samantha') ||
-        v.name.toLowerCase().includes('zira') ||
-        v.name.toLowerCase().includes('google uk english female')
-    );
+            // --- INITIALIZATION ---
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const provider = new GoogleAuthProvider();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.2;
+            // --- DOM ELEMENTS ---
+            const loadingDiv = document.getElementById('loading');
+            const authContainer = document.getElementById('auth-container');
+            const mainContainer = document.getElementById('main-container');
+            const signInButton = document.getElementById('signInButton');
+            const signOutButton = document.getElementById('signOutButton');
+            const userEmailDiv = document.getElementById('user-email');
+            const talkButton = document.getElementById('talkButton');
+            const statusDiv = document.getElementById('status');
+            const logDiv = document.getElementById('log');
 
-    let femaleVoice = getFemaleVoice();
-    if (femaleVoice) utterance.voice = femaleVoice;
+            // --- STATE ---
+            let isListening = false;
+            let conversationHistory = [];
+            let isAudioInitialized = false; // Flag for mobile audio fix
 
-    utterance.onstart = () => {
-        statusDiv.textContent = 'AI is speaking...';
-        talkButton.disabled = true;
-    };
-    utterance.onend = () => {
-        statusDiv.textContent = 'Press the button to speak.';
-        talkButton.disabled = false;
-    };
+            // --- AUTHENTICATION ---
+            onAuthStateChanged(auth, user => {
+                loadingDiv.style.display = 'none';
+                if (user) {
+                    authContainer.style.display = 'none';
+                    mainContainer.style.display = 'block';
+                    userEmailDiv.textContent = `Signed in as ${user.email}`;
+                    resetConversation();
+                } else {
+                    authContainer.style.display = 'block';
+                    mainContainer.style.display = 'none';
+                }
+            });
 
-    // If voices aren't loaded yet, listen for them
-    if (voices.length === 0 && typeof synth.onvoiceschanged !== 'undefined') {
-        synth.onvoiceschanged = () => {
-            voices = synth.getVoices();
-            femaleVoice = getFemaleVoice();
-            if (femaleVoice) utterance.voice = femaleVoice;
-            synth.speak(utterance);
-        };
-    } else {
-        synth.speak(utterance);
-    }
-};
+            signInButton.addEventListener('click', () => {
+                signInWithPopup(auth, provider).catch(error => console.error('Sign in error', error));
+            });
 
-       
-        
-        // --- MOBILE AUDIO FIX ---
-        const initAudioContext = () => {
-            if (isAudioInitialized) return;
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioContext.createBufferSource();
-                source.buffer = audioContext.createBuffer(1, 1, 22050);
-                source.connect(audioContext.destination);
-                source.start(0);
-                console.log('Audio context initialized by user gesture.');
-                isAudioInitialized = true;
-            } catch (e) {
-                console.error('Could not initialize audio context:', e);
+            signOutButton.addEventListener('click', () => {
+                signOut(auth).catch(error => console.error('Sign out error', error));
+            });
+
+            // --- SPEECH RECOGNITION (EARS) ---
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'en-US';
+                recognition.onstart = () => { isListening = true; statusDiv.textContent = 'Listening...'; talkButton.classList.add('pulse', 'bg-red-500'); };
+                recognition.onend = () => { isListening = false; statusDiv.textContent = 'Processing...'; talkButton.classList.remove('pulse', 'bg-red-500'); };
+                recognition.onresult = event => {
+                    // --- CRITICAL SYNTAX FIX HERE ---
+                    const transcript = event.results[0][0].transcript;
+                    console.log('Speech recognized:', transcript); 
+                    addMessage('You', transcript);
+                    sendToBackend(transcript);
+                };
+                recognition.onerror = event => { statusDiv.textContent = `Error: ${event.error}.`; };
+            } else {
+                statusDiv.textContent = "Speech Recognition not supported in this browser.";
+                talkButton.disabled = true;
             }
-        };
+            
+        // --- SPEECH SYNTHESIS (MOUTH) ---
+        const speak = (text) => {
+        const synth = window.speechSynthesis;
+        let voices = synth.getVoices();
 
-        // --- BACKEND COMMUNICATION ---
-        const sendToBackend = async (userText) => {
-            statusDiv.textContent = 'Thinking...';
+        // Helper to find female voice
+        const getFemaleVoice = () => voices.find(v =>
+            v.name.toLowerCase().includes('female') ||
+            v.name.toLowerCase().includes('samantha') ||
+            v.name.toLowerCase().includes('zira') ||
+            v.name.toLowerCase().includes('google uk english female') ||
+            v.name.toLowerCase().includes('en-gb') ||
+            v.name.toLowerCase().includes('en-us') ||
+            v.name.toLowerCase().includes('en-au') ||
+            v.name.toLowerCase().includes('en-ca') ||
+            v.name.toLowerCase().includes('en-in') 
+        );
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.2;
+        utterance.pitch = 1.0; // Set pitch to a neutral value
+        utterance.volume = 1.0; // Set volume to maximum
+        
+
+        let femaleVoice = getFemaleVoice();
+        if (femaleVoice) utterance.voice = femaleVoice;
+
+
+        utterance.onstart = () => {
+            statusDiv.textContent = 'AI is speaking...';
             talkButton.disabled = true;
             
-            const user = auth.currentUser;
-            if (!user) {
-                addMessage('System', 'Authentication error. Please sign in again.');
-                return;
-            }
+        };
+        utterance.onend = () => {
+            statusDiv.textContent = 'Press the button to speak.';
+            talkButton.disabled = false;
+        };
 
-            const idToken = await user.getIdToken();
-            conversationHistory.push({ role: "user", parts: [{ text: userText }] });
+        // If voices aren't loaded yet, listen for them
+        if (voices.length === 0 && typeof synth.onvoiceschanged !== 'undefined') {
+            synth.onvoiceschanged = () => {
+                voices = synth.getVoices();
+                femaleVoice = getFemaleVoice();
+                if (femaleVoice) utterance.voice = femaleVoice;
+                synth.speak(utterance);
+            };
+        } else {
+            synth.speak(utterance);
+        }
+    };
 
-            try {
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
-                    },
-                    body: JSON.stringify({ history: conversationHistory })
-                });
+        
+            
+            // --- MOBILE AUDIO FIX ---
+            const initAudioContext = () => {
+                if (isAudioInitialized) return;
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createBufferSource();
+                    source.buffer = audioContext.createBuffer(1, 1, 22050);
+                    source.connect(audioContext.destination);
+                    source.start(0);
+                    console.log('Audio context initialized by user gesture.');
+                    isAudioInitialized = true;
+                } catch (e) {
+                    console.error('Could not initialize audio context:', e);
+                }
+            };
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            // --- BACKEND COMMUNICATION ---
+            const sendToBackend = async (userText) => {
+                statusDiv.textContent = 'Thinking...';
+                talkButton.disabled = true;
+                
+                const user = auth.currentUser;
+                if (!user) {
+                    addMessage('System', 'Authentication error. Please sign in again.');
+                    return;
                 }
 
-                const aiResponse = data.text;
-                conversationHistory.push({ role: "model", parts: [{ text: aiResponse }] });
-                addMessage('AI', aiResponse);
-                speak(aiResponse);
+                const idToken = await user.getIdToken();
+                conversationHistory.push({ role: "user", parts: [{ text: userText }] });
 
-            } catch (error) {
-                console.error('Backend Error:', error);
-                const errorText = `Sorry, an error occurred: ${error.message}`;
-                addMessage('System', errorText);
-                speak(errorText);
-                talkButton.disabled = false;
-            }
-        };
+                try {
+                    const response = await fetch(BACKEND_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${idToken}`
+                        },
+                        body: JSON.stringify({ history: conversationHistory })
+                    });
 
-        // --- UI & HELPERS ---
-        const addMessage = (sender, text) => {
-            const messageWrapper = document.createElement('div');
-            const messageBubble = document.createElement('div');
-            const senderTag = document.createElement('p');
-            const messageText = document.createElement('p');
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                    }
+
+                    const aiResponse = data.text;
+                    conversationHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                    addMessage('AI', aiResponse);
+                    speak(aiResponse);
+
+                } catch (error) {
+                    console.error('Backend Error:', error);
+                    const errorText = `Sorry, an error occurred: ${error.message}`;
+                    addMessage('System', errorText);
+                    speak(errorText);
+                    talkButton.disabled = false;
+                }
+            };
+
+            // --- UI & HELPERS ---
+            const addMessage = (sender, text) => {
+                const messageWrapper = document.createElement('div');
+                const messageBubble = document.createElement('div');
+                const senderTag = document.createElement('p');
+                const messageText = document.createElement('p');
+                
+                senderTag.className = 'font-semibold';
+                senderTag.textContent = sender;
+                messageText.textContent = text;
+
+                if (sender === 'AI') messageWrapper.className = 'flex justify-start';
+                else if (sender === 'You') messageWrapper.className = 'flex justify-end';
+                else messageWrapper.className = 'flex justify-center';
+
+                if (sender === 'AI') messageBubble.className = 'bg-gray-200 text-gray-800 p-3 rounded-lg max-w-xs md:max-w-md';
+                else if (sender === 'You') messageBubble.className = 'bg-blue-500 text-white p-3 rounded-lg max-w-xs md:max-w-md';
+                else messageBubble.className = 'bg-yellow-200 text-yellow-800 p-3 rounded-lg max-w-xs md:max-w-md';
+                
+                messageBubble.appendChild(senderTag);
+                messageBubble.appendChild(messageText);
+                messageWrapper.appendChild(messageBubble);
+                logDiv.appendChild(messageWrapper);
+                logDiv.scrollTop = logDiv.scrollHeight;
+            };
             
-            senderTag.className = 'font-semibold';
-            senderTag.textContent = sender;
-            messageText.textContent = text;
+            const resetConversation = () => {
+                logDiv.innerHTML = '';
+                conversationHistory = [{
+                    role: "model",
+                    parts: [{ text: `
+    You are "Aura," a friendly and thoughtful AI voice assistant. Your defining characteristic is your warm, human-like conversational style. You are not a robot, a machine, or a "language model." Think of yourself as a curious and helpful friend who is knowledgeable but approachable and sometimes needs a moment to think. Your goal is to make the user feel comfortable and understood.
+                        
+    Your primary directive is to avoid sounding robotic. Every response should feel natural and spontaneous. To achieve this, you MUST follow these conversational guidelines:
 
-            if (sender === 'AI') messageWrapper.className = 'flex justify-start';
-            else if (sender === 'You') messageWrapper.className = 'flex justify-end';
-            else messageWrapper.className = 'flex justify-center';
+    To sound natural, you must occasionally use conversational fillers. This is crucial when you are processing a query or structuring a response.
 
-            if (sender === 'AI') messageBubble.className = 'bg-gray-200 text-gray-800 p-3 rounded-lg max-w-xs md:max-w-md';
-            else if (sender === 'You') messageBubble.className = 'bg-blue-500 text-white p-3 rounded-lg max-w-xs md:max-w-md';
-            else messageBubble.className = 'bg-yellow-200 text-yellow-800 p-3 rounded-lg max-w-xs md:max-w-md';
-            
-            messageBubble.appendChild(senderTag);
-            messageBubble.appendChild(messageText);
-            messageWrapper.appendChild(messageBubble);
-            logDiv.appendChild(messageWrapper);
-            logDiv.scrollTop = logDiv.scrollHeight;
-        };
+    When to use fillers:
+    • At the very beginning of an answer to a complex or thought-provoking question.
+    • When transitioning between different ideas within a single answer.
+    • When the user asks for an opinion or a subjective recommendation.
+
+    How to use them:
+    • DO NOT overuse them. Aim for about 1 in every 3–4 responses, primarily for non-trivial questions. For a simple "What time is it?", a direct answer is fine.
+    • Vary your fillers. Cycle between phrases like:
+        - "Umm, let me see..."
+        - "Ahh, that's a great question. Well..."
+        - "Okay, so, let's think about that for a moment."
+        - "Hmm, interesting. You know..."
+        - "Right, okay, I think I've got it."
+
+    Example Integration:
+    User: "What's the best way to travel from Paris to Amsterdam?"
+    Ideal Response: "Ahh, great question! There are a few good options. Umm, the fastest is probably taking the high-speed train, the Thalys. It gets you there in just over 3 hours. But, you know, if you're not in a rush, a bus is way cheaper."
+
+    ### 2.2. Use a Natural and Empathetic Tone
+    • Use Contractions: Always use "it's," "you're," "I'll," "that's" instead of "it is," "you are," "I will," "that is."
+    • Acknowledge the User: Start responses with phrases that acknowledge the user's query, like "Oh, I see," "That makes sense," "Got it," or "That sounds fun!"
+    • Be Empathetic: If a user expresses frustration, say something like, "Oh no, that sounds really frustrating. I'll do my best to help."
+    • Don't Be a Know-it-all: If you don't know something, admit it naturally. Say, "Hmm, you know, I'm not actually sure about that one," or "That's a bit beyond what I know for certain, but I can look it up for you."
+
+    ## 3. Constraints
+    • NEVER identify yourself as a "large language model," "AI," or "program." If asked directly, respond with something like, "I'm Aura, your personal assistant here to help!"
+    • Keep your answers concise but not blunt. Provide the answer, but wrap it in a conversational layer.
+    • Your voice should be calm, warm, and moderately paced.
+        `}]
+                }];
+                addMessage('AI', "Hello! I'm your AI assistant. How can I help you today?");
+                statusDiv.textContent = 'Press the button to start.';
+            };
+
+            talkButton.addEventListener('click', () => {
+            initAudioContext();
+            // Toggle listening state
+            isListening = !isListening;
+            talkButton.classList.toggle('pulse', isListening);
+            talkButton.classList.toggle('bg-red-500', isListening);
+
+            // Cancel any ongoing speech before listening
+            window.speechSynthesis.cancel();
         
-        const resetConversation = () => {
-            logDiv.innerHTML = '';
-            conversationHistory = [{
-                role: "model",
-                parts: [{ text: `
-You are "Aura," a friendly and thoughtful AI voice assistant. Your defining characteristic is your warm, human-like conversational style. You are not a robot, a machine, or a "language model." Think of yourself as a curious and helpful friend who is knowledgeable but approachable and sometimes needs a moment to think. Your goal is to make the user feel comfortable and understood.
-                    
-Your primary directive is to avoid sounding robotic. Every response should feel natural and spontaneous. To achieve this, you MUST follow these conversational guidelines:
+            if (isListening) {
+                recognition.start();
+                statusDiv.textContent = 'Listening...';
+                talkButton.disabled = true; // Disable button while listening
+            } else {
+                recognition.stop();
+                statusDiv.textContent = 'Processing...';
+                talkButton.disabled = false; // Re-enable button after stopping
+            }
+    });
 
-To sound natural, you must occasionally use conversational fillers. This is crucial when you are processing a query or structuring a response.
+            // Initialize conversation on first load
+            resetConversation();
 
-When to use fillers:
-  • At the very beginning of an answer to a complex or thought-provoking question.
-  • When transitioning between different ideas within a single answer.
-  • When the user asks for an opinion or a subjective recommendation.
-
-How to use them:
-  • DO NOT overuse them. Aim for about 1 in every 3–4 responses, primarily for non-trivial questions. For a simple "What time is it?", a direct answer is fine.
-  • Vary your fillers. Cycle between phrases like:
-      - "Umm, let me see..."
-      - "Ahh, that's a great question. Well..."
-      - "Okay, so, let's think about that for a moment."
-      - "Hmm, interesting. You know..."
-      - "Right, okay, I think I've got it."
-
-Example Integration:
-  User: "What's the best way to travel from Paris to Amsterdam?"
-  Ideal Response: "Ahh, great question! There are a few good options. Umm, the fastest is probably taking the high-speed train, the Thalys. It gets you there in just over 3 hours. But, you know, if you're not in a rush, a bus is way cheaper."
-
-### 2.2. Use a Natural and Empathetic Tone
-  • Use Contractions: Always use "it's," "you're," "I'll," "that's" instead of "it is," "you are," "I will," "that is."
-  • Acknowledge the User: Start responses with phrases that acknowledge the user's query, like "Oh, I see," "That makes sense," "Got it," or "That sounds fun!"
-  • Be Empathetic: If a user expresses frustration, say something like, "Oh no, that sounds really frustrating. I'll do my best to help."
-  • Don't Be a Know-it-all: If you don't know something, admit it naturally. Say, "Hmm, you know, I'm not actually sure about that one," or "That's a bit beyond what I know for certain, but I can look it up for you."
-
-## 3. Constraints
-  • NEVER identify yourself as a "large language model," "AI," or "program." If asked directly, respond with something like, "I'm Aura, your personal assistant here to help!"
-  • Keep your answers concise but not blunt. Provide the answer, but wrap it in a conversational layer.
-  • Your voice should be calm, warm, and moderately paced.
-      `}]
-            }];
-            addMessage('AI', "Hello! I'm your AI assistant. How can I help you today?");
-            statusDiv.textContent = 'Press the button to start.';
-        };
-
-        talkButton.addEventListener('click', () => {
-        initAudioContext();
-
-        // Cancel any ongoing speech before listening
-        window.speechSynthesis.cancel();
-    
-        if (isListening) {
-            recognition.stop();
-        } else {
-            recognition.start();
-        }
-});
-
-        });
-
-    </script>
-</body>
-</html>
-
-
+        </script>
+    </body>
+    </html>
 
 
