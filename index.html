@@ -67,7 +67,6 @@
             appId: "1:758587245714:web:22ee829eac444e7411524b"
         };
         
-        // --- THIS IS THE CORRECTED URL ---
         const BACKEND_URL = 'https://maulikg.pythonanywhere.com/ask';
 
         // --- INITIALIZATION ---
@@ -89,6 +88,7 @@
         // --- STATE ---
         let isListening = false;
         let conversationHistory = [];
+        let isAudioInitialized = false; // Flag for mobile audio fix
 
         // --- AUTHENTICATION ---
         onAuthStateChanged(auth, user => {
@@ -122,6 +122,7 @@
             recognition.onstart = () => { isListening = true; statusDiv.textContent = 'Listening...'; talkButton.classList.add('pulse', 'bg-red-500'); };
             recognition.onend = () => { isListening = false; statusDiv.textContent = 'Processing...'; talkButton.classList.remove('pulse', 'bg-red-500'); };
             recognition.onresult = event => {
+                // --- CRITICAL SYNTAX FIX HERE ---
                 const transcript = event.results[0][0].transcript;
                 console.log('Speech recognized:', transcript); 
                 addMessage('You', transcript);
@@ -139,6 +140,22 @@
             utterance.onstart = () => { statusDiv.textContent = 'AI is speaking...'; talkButton.disabled = true; };
             utterance.onend = () => { statusDiv.textContent = 'Press the button to speak.'; talkButton.disabled = false; };
             window.speechSynthesis.speak(utterance);
+        };
+        
+        // --- MOBILE AUDIO FIX ---
+        const initAudioContext = () => {
+            if (isAudioInitialized) return;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createBufferSource();
+                source.buffer = audioContext.createBuffer(1, 1, 22050);
+                source.connect(audioContext.destination);
+                source.start(0);
+                console.log('Audio context initialized by user gesture.');
+                isAudioInitialized = true;
+            } catch (e) {
+                console.error('Could not initialize audio context:', e);
+            }
         };
 
         // --- BACKEND COMMUNICATION ---
@@ -206,7 +223,7 @@
             
             messageBubble.appendChild(senderTag);
             messageBubble.appendChild(messageText);
-            messageWrapper.appendChild(messageWrapper);
+            messageWrapper.appendChild(messageBubble);
             logDiv.appendChild(messageWrapper);
             logDiv.scrollTop = logDiv.scrollHeight;
         };
@@ -222,6 +239,8 @@
         };
 
         talkButton.addEventListener('click', () => {
+            initAudioContext();
+            
             if (isListening) recognition.stop();
             else recognition.start();
         });
