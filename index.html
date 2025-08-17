@@ -138,15 +138,11 @@
             }
             
         // --- SPEECH SYNTHESIS (MOUTH) ---
-            const speak = (text) => {
-        // If a speaking loop is active, interrupt and return
-        if (isSpeakingChunks) {
-            speakingInterrupted = true;
-            window.speechSynthesis.cancel();
-            return;
-        }
-        speakingInterrupted = false;
-        isSpeakingChunks = true; // Mark chunk speaking as active
+        const speak = (text) => {
+            if (isSpeakingChunks) return; // Prevent overlapping speech loops
+
+            speakingInterrupted = false; // Reset interruption on new speech
+            isSpeakingChunks = true;
 
         const synth = window.speechSynthesis;
         const getFemaleVoice = () => {
