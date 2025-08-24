@@ -1,56 +1,68 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>AI Voice Agent</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <style>
-            body { font-family: 'Inter', sans-serif; }
-            .pulse { animation: pulse-blue 2s infinite; }
-            @keyframes pulse-blue {
-                0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-                70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-                100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-            }
-            #auth-container, #main-container { display: none; }
-        </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Voice Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .pulse { animation: pulse-blue 2s infinite; }
+    @keyframes pulse-blue {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    #auth-container, #main-container { display: none; }
+    /* custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.6); border-radius: 8px; }
+  </style>
     </head>
-    <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 p-6">
 
-        <div id="loading" class="text-center">
-            <p class="text-lg text-gray-600">Loading...</p>
+    <div id="loading" class="text-center text-white">
+        <p class="text-lg">Loading...</p>
+    </div>
+
+    <!-- Authentication Container -->
+    <div id="auth-container" class="w-full max-w-md mx-auto bg-white/30 backdrop-blur-xl rounded-2xl shadow-xl p-10 text-center border border-white/20">
+        <h1 class="text-4xl font-extrabold text-white drop-shadow">Welcome!</h1>
+        <p class="text-gray-100 mt-3 mb-8">Sign in to start your AI Voice Agent</p>
+        <button id="signInButton" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-xl w-full shadow-lg transition transform hover:scale-105">
+        Sign in with Google
+        </button>
+    </div>
+
+    <!-- Main Agent Container -->
+    <div id="main-container" class="w-full max-w-2xl mx-auto bg-white/30 backdrop-blur-xl rounded-2xl shadow-xl p-6 md:p-8 border border-white/20">
+        <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white drop-shadow">Aura</h1>
+            <p id="user-email" class="text-sm text-gray-200"></p>
+        </div>
+        <button id="signOutButton" class="text-sm text-gray-200 hover:text-red-400 transition">Sign Out</button>
         </div>
 
-        <!-- Authentication Container -->
-        <div id="auth-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Welcome!</h1>
-            <p class="text-gray-500 mt-2 mb-8">Please sign in to start your AI Voice Agent.</p>
-            <button id="signInButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full transition duration-300">
-                Sign in with Google
-            </button>
+        <!-- Talk Button -->
+        <div class="flex justify-center my-8">
+        <button id="talkButton" class="relative w-28 h-28 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none shadow-lg hover:scale-105">
+            <div class="absolute w-full h-full rounded-full animate-ping bg-blue-400 opacity-30"></div>
+            <svg class="w-12 h-12 relative z-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0..." />
+            </svg>
+        </button>
         </div>
 
-        <!-- Main Agent Container -->
-        <div id="main-container" class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-800">AI Voice Agent</h1>
-                    <p id="user-email" class="text-sm text-gray-500"></p>
-                </div>
-                <button id="signOutButton" class="text-sm text-gray-600 hover:text-red-500 transition">Sign Out</button>
-            </div>
-            <div class="flex justify-center my-8">
-                <button id="talkButton" class="w-24 h-24 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                    <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m12 0v-1.5a6 6 0 00-12 0v1.5m12 0v-1.5a6 6 0 00-12 0v1.5" /></svg>
-                </button>
-            </div>
-            <div id="status" class="text-center text-gray-600 h-8 mb-4 transition-opacity duration-300"></div>
-            <div class="space-y-4 h-64 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <div id="log"></div>
-            </div>
+        <!-- Status -->
+        <div id="status" class="text-center text-gray-100 font-medium h-8 mb-4 transition-opacity duration-300"></div>
+
+        <!-- Chat Log -->
+        <div class="space-y-4 h-72 overflow-y-auto p-4 bg-white/40 backdrop-blur-md rounded-lg border border-white/20">
+        <div id="log" class="space-y-3"></div>
         </div>
+    </div>
 
         <!-- Firebase SDKs -->
         <script type="module">
