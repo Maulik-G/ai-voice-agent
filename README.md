@@ -60,6 +60,8 @@ Ensure your Python backend API is running.
 
 Update the API URL in script.js if needed.
 
+For reference, check /Backend/main.py
+
 4. Firebase Authentication
 
 Create a Firebase project.
